@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <unistd.h>
+#include <math.h>
 #include "includes/push_swap.h"
+
+void    check_big_pa(char **a,char **b,int size);
 
 void sa(char **a)
 {
@@ -54,7 +57,7 @@ void   rb(char **b, char size)
     write(1,"rb\n",3);
 }
 
-void    rra(char **a,int size)
+void    rra1(char **a,int size)
 {
     char *temp;
     int i = 0;
@@ -69,21 +72,6 @@ void    rra(char **a,int size)
     write(1,"rra\n",4);
 }
 
-void    rrb(char **b,int size)
-{
-    char *temp;
-    int i = 0;
-    int n;
-    while(i < size && b[i][0] != ' ')
-        i++;
-    temp = b[i -1];
-    n = i;
-    while(--i > 0)
-        b[i] = b[i -1];
-    b[0] = temp;
-    write(1,"\nrrb\n",3);
-
-}
 
 
 int is_sorted(char **a, int size)  // 1 2 4 5 
@@ -92,7 +80,9 @@ int is_sorted(char **a, int size)  // 1 2 4 5
     while (i < size -1)
     {
         if (ft_atoi(a[i]) > ft_atoi(a[i + 1]))
+        {
             return (0);
+        }
         i++;
     }
     // write(1,"done",4);
@@ -103,7 +93,7 @@ int max(char **a, int size)
 {
     int max = ft_atoi(a[0]);
     int i = 0;
-    while(i < size && a[i][0] != ' ')
+    while(i < size && a[i][0] != ' ' && a[i][0] != '+')
     {
         if (ft_atoi(a[i]) >= max)
             max = ft_atoi(a[i]);
@@ -128,31 +118,48 @@ int min(char **a,int size)
     return (b);
 }
 
+
+void	rra(char **a, int elements_size)
+{
+	int		index;
+	char	*t;
+	int		i;
+
+	index = 0;
+	while (index < elements_size && a[index][0] != ' ')
+		index++;
+	t = a[index - 1];
+	i = index;
+	while (--i > 0)
+		a[i] = a[i - 1];
+	a[0] = t;
+	write(1, "rra\n", 4);
+}
+
 void    two_or_three(char **a,int size)
 {
     if(size == 2)
         sa(a);
     if (size == 3)
     {
-        int bignumber = max(a,size);
-        int smallnumber = min(a,size);
-        if (bignumber == ft_atoi(a[0])) // 2 3 1
+        int bignb = max(a,size);
+        int smallnb = min(a,size);
+        if (bignb == ft_atoi(a[2]) && smallnb == ft_atoi(a[1]))
+            sa(a);
+        if (bignb == ft_atoi(a[0]) && smallnb == ft_atoi(a[2]))
         {
-            // ra(a,size);
-            if (smallnumber != ft_atoi(a[0]))
-                sa(a);
-        }
-        if (bignumber == ft_atoi(a[1]))
-        {
+            sa(a);
             rra(a,size);
-            if (smallnumber != ft_atoi(a[0]))
-                sa(a);
         }
-        if (bignumber == ft_atoi(a[2]))
+        if (bignb == ft_atoi(a[0]) && smallnb == ft_atoi(a[1]))
+           ra(a,size);
+        if (bignb == ft_atoi(a[1]) && smallnb == ft_atoi(a[0]))
         {
-            if (smallnumber != ft_atoi(a[0]))
-                sa(a);
+            sa(a);
+            ra(a,size);
         }
+        if (bignb == ft_atoi(a[1]) && smallnb == ft_atoi(a[2]))
+           rra(a,size);
     }
 }
 
@@ -177,46 +184,6 @@ int	pb(char **a, char **b, int size)
     return (size);
 }
 
-int	pb1(int*a, int *b, int size)
-{
-	int	i;
-
-	i = size + 1;
-	while (--i > 0)
-		b[i] = b[i - 1];
-	b[0] = a[0];
-	i = 0;
-	while (i < size - 1)
-	{
-		a[i] = a[i + 1];
-		i++;
-	}
-    // a[i] = " ";
-	// size--;
-	write(1, "pb\n", 3);
-    return (size);
-}
-
-
-// void	pa(char **a, char **b, int size)
-// {
-// 	int	i;
-
-// 	i = size;
-// 	while (--i > 0)
-// 		a[i] = a[i - 1];
-// 	a[0] = b[0];
-// 	i = 0;
-// 	while (i < size && b[i + 1][0] != ' ')
-// 	{
-// 		b[i] = b[i + 1];
-// 		i++;
-// 	}
-// 	b[i] = " ";
-// 	write(1, "pa\n", 3);
-// }
-
-
 void	pa(char **a, char **b, int size)
 {
 	int	i;
@@ -236,33 +203,12 @@ void	pa(char **a, char **b, int size)
 }
 
 
-// void    pa(char **a,char **b, int size)
-// {
-//     int i;
-
-//     i = size;
-//     // printf("%d\n",size);
-//     while(--i > 0)
-//         a[i] = a[i - 1];
-//     a[0] = b[0];
-//     i = 0;
-//     // int bc = ft_strlen(b);
-
-//     while(i < size && b[i + 1][0] != ' ')
-//     {
-//         b[i] = b[i + 1];
-//         i++;
-//     }
-//     b[i] = " ";
-//     write(1,"pa\n",3);
-// }
-
 
 int ft_pos(char  **a, int size, int ps)
 {
     int i = -1;
     while(++i < size)
-        if (ft_atoi(a[i]) == ps && a[i][0] != ' ')
+        if (ft_atoi(a[i]) == ps && a[i][0] != ' ' && a[i][0] != '+')
             return (i);
     return (-1);
 }
@@ -284,7 +230,7 @@ void    check_and_pb(char **a,char **b,int size)
     {
         while(ps > 0)
         {
-            // ra(a,size);
+            ra(a,size);
             ps--;
         }
     }
@@ -296,51 +242,27 @@ void    check_and_pb(char **a,char **b,int size)
             ps++;
         }
     }
-    // printf("%d\n",ps);
     pb(a,b,size);
-    // (void)b;
 }
 
 void    four_or_five(char **a,char **b,int size)
 {
-    // (void)b;
-    // int bignumber = max(a,size);
     int smallnumber = min(a,size);
-    // int ps = ft_pos(a,size,smallnumber);
-    // printf("%d\n",ps);
+    int ps = ft_pos(a,size,smallnumber);
     if (size == 4)
     {
-        if (smallnumber == ft_atoi(a[0]))
+        if (ps)
         {
-            pb(a,b,size);
-            two_or_three(a,size -1);
-            pa(a,b,size);
+            while(ps > 0)
+            {
+                ra(a,size);
+                ps--;
+            }
         }
-        if (smallnumber == ft_atoi(a[1]))
-        {
-            sa(a);
-            pb(a,b,size);
-            two_or_three(a,size -1);
-            pa(a,b,size);
-        }
-        if (smallnumber == ft_atoi(a[2]))
-        {
-            rra(a,size);
-            rra(a,size);
-            pb(a,b,size);
-            two_or_three(a,size -1);
-            pa(a,b,size);
-        }
-        if (smallnumber == ft_atoi(a[3]))
-        {
-            rra(a,size);
-            pb(a,b,size);
-            two_or_three(a,size -1);
-            pa(a,b,size);
-        }
+        pb(a,b,size);
+        two_or_three(a,size - 1);
+        pa(a,b,size);
     }
-    // (void)b;
-    // int c = -19;
     if (size == 5)
     {
         check_and_pb(a,b,size);
@@ -353,9 +275,8 @@ void    four_or_five(char **a,char **b,int size)
 
 void check_and_pb_more(char **a,char **b,int size)
 {
-    // int i = size;
-    int bbbbb = size;
-    while(bbbbb-- >= 0)
+    int bbbbb = 0;
+    while(bbbbb <= size -1)
     {
         int smallnumber = min(a,size);
         int ps = ft_pos(a,size,smallnumber);
@@ -363,27 +284,20 @@ void check_and_pb_more(char **a,char **b,int size)
         {
             while(ps > 0)
             {
-                // ra(a,size);
+                ra(a,size);
                 ps--;
             }
         }
-        // else if (ps > (i / 2))
-        // {
-        //     while(ps < i)
-        //     {
-        //         rra(a,size);
-        //         ps++;
-        //     }
-        // }
         pb(a,b,size);
+        bbbbb++;
     }
 }
 
 void    more(char **a, char **b, int size)
 {
     check_and_pb_more(a,b,size);
-    int bb = size;
-    while(bb-- >= 0)
+    int bb = 0;
+    while(bb++ <= size-1)
         pa(a,b,size);
 }
 
@@ -430,19 +344,12 @@ void    chink(char **stack_a, char **stack_b,char *start, char *end,int size)
                         ps--;
                     }
                 }
-                // else
-                // {
-                //     while(ps > 0)
-                //     {
-                //         ra(stack_a,size);
-                //         ps--;
-                //     }
-                // }
                 pb(stack_a,stack_b,size);
                 i = -1;
         }
         i++;
     }
+
 }
 
 int read_top(char **stack_a,int size, char *start, char *end)
@@ -454,10 +361,8 @@ int read_top(char **stack_a,int size, char *start, char *end)
     {
         if (stack_a[i][0] != ' ' && ft_atoi(stack_a[i]) >= ft_atoi(start) && ft_atoi(stack_a[i]) <= ft_atoi(end))
         {
-            // printf("read_top  ======= %d",ft_atoi(stack_a[i]));
             ps = ft_pos(stack_a,size,ft_atoi(stack_a[i]));
             return (ps);
-            // printf("ps[%d]     ::::: read_top  ======= %d\n",ps,ft_atoi(stack_a[i]));
         }
         i++;
     }
@@ -469,14 +374,11 @@ int read_down(char **stack_a,int size, char *start, char *end)
     int i = size -1;
     int ps;
 
-    // printf("read_down \n");
-
     while(i > 0)
     {
         if (stack_a[i][0] != ' ' && ft_atoi(stack_a[i]) >= ft_atoi(start) && ft_atoi(stack_a[i]) <= ft_atoi(end))
         {
             ps = ft_pos(stack_a,size,ft_atoi(stack_a[i]));
-            // return (ps);
             return (size - ps);
         }
         i--;
@@ -485,22 +387,21 @@ int read_down(char **stack_a,int size, char *start, char *end)
 }
 
 
-void    chinks(char **stack_a, char **stack_b,char *start, char *end,int *size)
+void    chinks(char **stack_a, char **stack_b,char *start, char *end,int size)
 {
     char *start1= start;
     char *end1 = end;
     int loop = 0;
-    while  (loop < *size)
+    while  (loop < size)
     {
-        int ps_top = read_top(stack_a,*size,start,end);
-        int ps_down = read_down(stack_a,*size,start1,end1);
+        int ps_top = read_top(stack_a,size,start,end);
+        int ps_down = read_down(stack_a,size,start1,end1);
         (void)stack_b;
-        //printf("ra is %d and rra is %d \n", ps_top, ps_down);
         if (ps_top > ps_down && ps_down != -1)
         {
             while(ps_down > 0)
             {
-                rra(stack_a, *size);
+                rra(stack_a, size);
                 ps_down--;
             }
         }
@@ -508,22 +409,34 @@ void    chinks(char **stack_a, char **stack_b,char *start, char *end,int *size)
         {
             while(ps_top > 0)
             {
-                ra(stack_a, *size);
+                ra(stack_a, size);
                 ps_top--;
             }
         }
         if (ps_top != -1 || ps_down != -1)
         {
-            pb(stack_a, stack_b, *size);
-            // (*size)--;
+            pb(stack_a, stack_b, size);
         }
         loop++;
     }
-    // printf("ps_top == %d ::::: ps_down == %d",ps_top,ps_down);
-
 }
 
+void	rrb(char **b, int elements_size)
+{
+	int		index;
+	char	*t;
+	int		i;
 
+	index = 0;
+	while (index < elements_size && b[index][0] != ' ')
+		index++;
+	t = b[index - 1];
+	i = index;
+	while (--i > 0)
+		b[i] = b[i - 1];
+	b[0] = t;
+	write(1, "rrb\n", 4);
+}
 
 void    check_big_pa(char **a,char **b,int size)
 {
@@ -533,34 +446,26 @@ void    check_big_pa(char **a,char **b,int size)
     {
         int bignum = max(b,size);
         int ps = ft_pos(b,size,bignum);
-        // int save = ps;
-        // printf("big == [%d] ps == [%d]",bignum,ps);
         if(ps >= us_size / 2)
         {
             ps = us_size - ps;
             while(ps > 0)
             {
-                rra(b,size);
+                rrb(b,size);
                 ps--;
             }
         }
-        else
-        {
-            while (ps > 0)
-            {
-                ra(b,size);
-                ps--;
-            }
-        }
+        // else
+        // {
+        //     while (ps > 0)
+        //     {
+        //         rb(b,size);
+        //         ps--;
+        //     }
+        // }
 
-        //  i = 0;
         pa(a,b,size);
         us_size--;
-        // while (save)
-        // {
-        //     rra(b,size);
-        //     save--;
-        // }
         i++;
     }
 }
@@ -570,44 +475,132 @@ void    one_hundred(char **a,char **b,int size,int step)
     char **sorted = swap(size, a);
     int start = 0;
     int end = step;
-    int save = size;
     while(start < size)
     {
-        chinks(a,b,sorted[start],sorted[end],&size);
+        chinks(a,b,sorted[start],sorted[end],size);
         if(end + step -1 > size)
         {
             start += step;
             end = size - 1;
-            //size -=  (size  - 1);
         }
         else
         {
             start += step;
-            //start++;
             end = start +step;
-            //size -=  step;
         }
-        //size -=  1;
     }
      check_big_pa(a,b,size);
-    // chinks(a,b,sorted[start],sorted[end],size);
-
-
-
-
-
-    int q = -1;
-    while (++q < save)
-        printf("%s ", a[q]);
-
-    // int i = -1;
-    //  while(sorted[++i])
-    // {
-    //     // write(1,ft_itoa(ft_atoi(stack_a[i])),ft_strlen(ft_itoa(ft_atoi(stack_a[i]))));
-    //     write(1,ft_itoa(sorted[i]),ft_strlen(ft_itoa(sorted[i])));
-    //     write(1," ",1);
-    // }
 }
+
+
+char **index_xx(char **stack_a, int stack_a_size)
+{
+    char **temp = (char **)malloc(sizeof(char *) * stack_a_size);
+    int size = stack_a_size - 1;
+    // int i =0;
+    while(size != 0)
+    {
+        int bignb = max(stack_a,size);
+        int index = ft_pos(stack_a,size,bignb);
+        // temp[index] = ft_itoa(size);
+        printf("bignb == %d :::::::: index == %d\n",bignb,index);
+        stack_a[index] = "+";
+        size--;
+    }
+    
+    // i = 0;
+    // while(i < stack_a_size)
+    // {
+    //     printf("%s\n",temp[i]);
+    //     i++;
+    // }
+    return (temp);
+}
+
+
+// void    chunk0(char **a,char **b,char *start,char *end,int size)
+// {
+//     int i = 0;
+//     while(i < size)
+//     {
+//         if (a[i][0] != ' ' && ft_atoi(a[i]))
+//     }
+// }
+
+
+// void    all(char **stack_a,char **stack_b,int size)
+// {
+//     // (void)stack_b;
+//     int steps = 8;
+//     char **sorted = swap(size, stack_a);
+//     int start = 0;
+//     int end = steps;
+//     // chunk0(stack_a,stack_b,sorted[start],sorted[end],size);
+
+// }
+
+
+
+
+
+int is_dup(char **a, int size)  // 1 2 4 5 
+{
+    int i = 0;
+    int j = 0;
+
+    while(i < size)
+    {
+        j = i + 1;
+        while(j < size)
+        {
+            if (ft_atoi(a[i]) == ft_atoi(a[j]))
+            {
+                write(1,"ERROR\n",ft_strlen("ERROR\n"));
+                return (0);
+            }
+            j++;
+        }
+        i++;
+    }
+    return (1);
+}
+
+
+int	is_notnum(char **stack_a)
+{
+	int	i;
+	int	counter;
+    int b = 0;
+    while(stack_a[b])
+    {
+        i = ft_strlen(stack_a[b]) - 1;
+        counter = 0;
+        while (i >= 0)
+        {
+            if (!ft_isdigit(stack_a[b][i]))
+            {
+                if (stack_a[b][i] == '-')
+                {
+                    counter++;
+                    if (i > 0 || counter > 1)
+                        return (1);
+                }
+                else
+                {
+                    return (1);
+                }
+            }
+            i--;
+        }
+        b++;
+
+    }
+	return (0);
+}
+
+
+
+
 
 
 int main(int argc,char **argv)
@@ -616,42 +609,41 @@ int main(int argc,char **argv)
     char  **stack_b;
     int size = argc -1;
     stack_a = (char **)malloc((size + 1) * sizeof(char *));
-    stack_b = (char **)malloc((size + 1) * sizeof(char *));
-    int i =-1;
-    while(++i < size)
-        stack_b[i] = " ";
+    int i = 0;
     i = -1;
     while(++i < size)
         stack_a[i] = argv[i + 1];
-    // i = -1;
-    // while(++i < size)
-    //     printf("%d\n",stack_a[i]);
-    // if(is_sorted(stack_a,size))
-    //     return (0);
-    // if (size <=3)
-    //     two_or_three(stack_a,size);
-    // if (size == 4 || size == 5)
-    //     four_or_five(stack_a,stack_b,size);
-    // if(size >= 6 && size <= 19)
-    //     more(stack_a,stack_b,size);
-    if(size > 19)
-        one_hundred(stack_a,stack_b,size, 8);
-        // one_hundred(stack_a,stack_b,size, 24);
-// i = -1;
-//     while(stack_b[++i])
-//     {
-//         // write(1,ft_itoa(ft_atoi(stack_a[i])),ft_strlen(ft_itoa(ft_atoi(stack_a[i]))));
-//         write(1,ft_itoa(stack_b[i]),ft_strlen(ft_itoa(stack_b[i])));
-//         write(1," ",1);
-//     }
-    // int i;
-    // i=-1;
-    // while(stack_a[++i])
-    // {
-    //     // write(1,ft_itoa(ft_atoi(stack_a[i])),ft_strlen(ft_itoa(ft_atoi(stack_a[i]))));
-    //     write(1,stack_a[i],ft_strlen(stack_a[i]));
-    //     write(1," ",1);
-    // }
+
+    stack_b = (char **)malloc((size + 1) * sizeof(char *));
+    i =-1;
+    while(++i < size)
+        stack_b[i] = " ";
+
+    if(!is_dup(stack_a,size))
+        return (0);
+    else if(is_sorted(stack_a,size))
+        return (0);
+    else if (is_notnum(stack_a))
+    {
+        write(1,"ERROR\n",ft_strlen("ERROR\n"));
+        return (0);
+    }
+    if (size <=3)
+        two_or_three(stack_a,size);
+    if (size == 4 || size == 5)
+        four_or_five(stack_a,stack_b,size);
+    if(size >= 6 && size <= 19)
+        more(stack_a,stack_b,size);
+    if(size >= 20 && size <= 100)
+        one_hundred(stack_a,stack_b,size,8);
+    if(size >= 101 && size <= 500)
+        one_hundred(stack_a,stack_b,size,128);
+    i = 0;
+    while(i < size)
+    {
+        printf("%s ",stack_a[i]);
+        i++;
+    }
 
     return (0);
 }
