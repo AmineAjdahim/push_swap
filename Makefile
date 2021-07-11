@@ -2,9 +2,8 @@ NAME = push_swap
 LIBFT =	Libft/libft.a
 CC = gcc
 INC = -I includes/
-SRCS =	main.c 
+SRCS =	main.c operations1.c operations2.c check1.c check2.c three_five.c static.c
 FLAGS = -Wall -Wextra -Werror -g -lreadline
-# FLAGS =
 OBJS = $(SRC:.c=.o)
 all: $(NAME)
 $(NAME): $(OBJS) $(LIBFT)

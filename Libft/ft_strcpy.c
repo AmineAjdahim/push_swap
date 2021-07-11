@@ -1,28 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strdup.c                                        :+:      :+:    :+:   */
+/*   ft_strcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: majdahim <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/15 03:23:00 by majdahim          #+#    #+#             */
-/*   Updated: 2021/07/11 19:49:43 by majdahim         ###   ########.fr       */
+/*   Created: 2019/10/17 17:56:44 by majdahim          #+#    #+#             */
+/*   Updated: 2021/07/11 19:39:51 by majdahim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include <stdlib.h>
 
-char	*ft_strdup(const char *src)
+char	*ft_strcpy(char *dst, const char *src)
 {
-	char			*temp;
-	unsigned long	len;
+	int		i;
 
-	len = ft_strlen((char *)src);
-	temp = (char *)malloc(len + 1);
-	if (!(temp))
-		return (0);
-	memcpy(temp, (char *)src, len);
-	temp[len] = '\0';
-	return (temp);
+	i = 0;
+	while (src[i] != '\0')
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = '\0';
+	return (dst);
 }

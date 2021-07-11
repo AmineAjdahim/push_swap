@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yer-raki <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: majdahim <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/19 19:50:58 by yer-raki          #+#    #+#             */
-/*   Updated: 2019/10/19 21:36:04 by yer-raki         ###   ########.fr       */
+/*   Created: 2019/10/15 19:32:14 by majdahim          #+#    #+#             */
+/*   Updated: 2019/10/20 04:30:01 by majdahim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,28 @@
 
 void	ft_putnbr_fd(int n, int fd)
 {
-	unsigned int nb;
+	int	nb;
 
+	if (n == -2147483648)
+	{
+		ft_putstr_fd("-2", fd);
+		n = 147483648;
+	}
 	if (n < 0)
 	{
 		ft_putchar_fd('-', fd);
-		n = -n;
-	}
-	nb = n;
-	if (nb > 9)
-	{
-		ft_putnbr_fd(nb / 10, fd);
-		ft_putchar_fd((nb % 10) + '0', fd);
+		nb = -n;
+		ft_putnbr_fd(nb, fd);
 	}
 	else
-		ft_putchar_fd(nb + '0', fd);
+	{
+		nb = n;
+		if (n < 10)
+			ft_putchar_fd(nb + 48, fd);
+		else
+		{
+			ft_putnbr_fd(nb / 10, fd);
+			ft_putchar_fd(nb % 10 + 48, fd);
+		}
+	}
 }

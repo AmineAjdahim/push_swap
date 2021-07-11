@@ -3,75 +3,97 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yer-raki <yer-raki@student.42.fr>          +#+  +:+       +#+        */
+/*   By: majdahim <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/15 16:54:53 by yer-raki          #+#    #+#             */
-/*   Updated: 2021/05/21 11:31:39 by yer-raki         ###   ########.fr       */
+/*   Created: 2019/10/22 21:21:46 by majdahim          #+#    #+#             */
+/*   Updated: 2021/07/11 19:38:46 by majdahim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int				nb_w(char const *s, char c)
+static	int	calc_num(const char *s, char c)
 {
-	int i;
-	int x;
-	int l;
-
-	i = 0;
-	x = 0;
-	l = 0;
-	while (s[i] != '\0')
-	{
-		if (s[i] == c)
-			x = 0;
-		else if (x == 0)
-		{
-			x = 1;
-			l++;
-		}
-		i++;
-	}
-	return (l);
-}
-
-unsigned long	nb_c(char const *s, char c, int i)
-{
-	int l;
-
-	l = 0;
-	while (s[i] != c && s[i] != '\0')
-	{
-		l++;
-		i++;
-	}
-	return (l);
-}
-
-char			**ft_split(char const *s, char c)
-{
-	char	**w;
+	int		count;
 	int		i;
+	int		mot;
+
+	count = 0;
+	mot = 0;
+	i = 0;
+	if (!s)
+		return (0);
+	while (*s != '\0')
+	{
+		if (*s == c)
+			mot = 0;
+		else if (mot == 0)
+		{
+			mot = 1;
+			count++;
+		}
+		s++;
+	}
+	return (count);
+}
+
+static	int	long_mot(const char *s, int i, char c)
+{
+	int		len;
 	int		j;
+
+	len = 0;
+	j = i;
+	i = 0;
+	while (s[j] != c)
+	{
+		len++;
+		j++;
+	}
+	return (len);
+}
+
+static	void	*fr_ee(char **mots, int j)
+{
+	while (j--)
+		free(mots[j]);
+	free(mots);
+	return (NULL);
+}
+
+static	char	**help(const char *s, char c, char **mots)
+{
+	int		i;
 	int		k;
+	int		j;
 
 	i = 0;
 	j = 0;
-	if (!s)
-		return (NULL);
-	if (!(w = (char**)malloc(sizeof(char *) * (nb_w(s, c) + 1))))
-		return (NULL);
-	while (s[i] != '\0' && nb_w(s, c) > j)
+	while (s[i] != '\0' && j < calc_num(s, c))
 	{
 		k = 0;
 		while (s[i] == c)
 			i++;
-		w[j] = (char *)malloc(sizeof(char) * (nb_c(s, c, i) + 1));
-		while (s[i] != c && s[i])
-			w[j][k++] = s[i++];
-		w[j][k] = '\0';
+		mots[j] = malloc(sizeof(char) * long_mot(s, i, c) + 1);
+		if (mots[j] == NULL)
+			return (fr_ee(mots, j));
+		while (s[i] != c)
+			mots[j][k++] = s[i++];
+		mots[j][k] = '\0';
 		j++;
 	}
-	w[j] = 0;
-	return (w);
+	mots[j] = 0;
+	return (mots);
+}
+
+char	**ft_split(char const *s, char c)
+{
+	char	**mots;
+
+	if (!s)
+		return (NULL);
+	mots = malloc(sizeof(char *) * calc_num(s, c) + 1);
+	if (!mots)
+		return (NULL);
+	return (help(s, c, mots));
 }

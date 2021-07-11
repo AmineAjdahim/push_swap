@@ -1,10 +1,10 @@
 import random
 
-how_many_numbers =110
+how_many_numbers =500
 
 l = []
 for i in range(10000):
-    l.append(random.randint(10, 600))
+    l.append(random.randint(-100, 900))
 
 my_final_list = []
 [my_final_list.append(n) for n in l if n not in my_final_list]

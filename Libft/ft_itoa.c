@@ -3,59 +3,70 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yer-raki <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: majdahim <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/15 21:34:23 by yer-raki          #+#    #+#             */
-/*   Updated: 2019/10/23 18:56:23 by yer-raki         ###   ########.fr       */
+/*   Created: 2019/10/22 01:06:19 by majdahim          #+#    #+#             */
+/*   Updated: 2021/07/11 19:35:51 by majdahim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
 #include "libft.h"
 
-int		len_int(int n)
+static	int	ft_count(unsigned int s)
 {
-	int				l;
-	unsigned int	nb;
+	short	i;
 
-	l = 1;
-	if (n < 0)
+	i = 1;
+	while (s >= 10)
 	{
-		l++;
-		nb = (unsigned int)(-n);
+		s /= 10;
+		i++;
 	}
-	else
-		nb = (unsigned int)n;
-	while (nb > 9)
+	return (i);
+}
+
+static	char	*ft_conv(char *ptr, unsigned int c, short i, short k)
+{
+	short		mod;
+	short		j;
+
+	j = 0;
+	mod = 0;
+	while (c >= 10)
 	{
-		nb /= 10;
-		l++;
+		mod = c % 10;
+		ptr[--i + k] = mod + '0';
+		c /= 10;
+		j++;
 	}
-	return (l);
+	if (c < 10)
+		ptr[--i + k] = c + '0';
+	ptr[j + 1 + k] = '\0';
+	return (ptr);
 }
 
 char	*ft_itoa(int n)
 {
-	int				l;
-	char			*s;
-	unsigned int	nb;
+	unsigned int		save;
+	short				k;
+	char				*ptr;
+	short				compt;
 
-	l = len_int(n);
-	s = (char *)malloc(sizeof(char) * (l + 1));
-	if (!s)
-		return (NULL);
-	s[l] = '\0';
-	l--;
-	if (n >= 0)
-		nb = (unsigned int)n;
-	else
-		nb = (unsigned int)(-n);
-	while (l >= 0)
-	{
-		s[l] = (nb % 10) + '0';
-		nb /= 10;
-		l--;
-	}
+	k = 0;
+	save = 0;
 	if (n < 0)
-		s[0] = '-';
-	return (s);
+	{
+		save = n * -1;
+		k = 1;
+	}
+	else
+		save = n;
+	compt = ft_count(save);
+	ptr = malloc(sizeof(char) * compt + 1 + k);
+	if (!ptr)
+		return (NULL);
+	if (k)
+		ptr[0] = '-';
+	return (ft_conv(ptr, save, compt, k));
 }
